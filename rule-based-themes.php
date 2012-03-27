@@ -42,30 +42,30 @@ class rulebasedthemes {
         $serialized = "<?php \n\r\$rbtme_rules = array(\n\r";
 
         foreach ($rules as $rulekey => $parentRule){
-            $serialized .= "    \"$rulekey\" => array(\n\r";
-            $serialized .= "        \"value\" => \"".$parentRule["value"]."\",\n\r";
+            $serialized .= "    \"".rulebasedthemes::normalize_rule_name($rulekey)."\" => array(\n\r";
+            $serialized .= "        \"value\" => \"".rulebasedthemes::normalize_value($parentRule["value"])."\",\n\r";
             $serialized .= "        \"rules\" => array(\n\r";
             foreach ($parentRule["rules"] as $srulekey => $rule){
-                $serialized .= "            \"".$srulekey."\" => array(\n\r";
-                $serialized .= "                \"Type\" => \"".$rule["Type"]."\",\n\r";
+                $serialized .= "            \"".rulebasedthemes::normalize_rule_name($srulekey)."\" => array(\n\r";
+                $serialized .= "                \"Type\" => \"".rulebasedthemes::normalize_rule_name($rule["Type"])."\",\n\r";
                 switch($rule["Type"]){
                     case "Date":
-                        $serialized .= "                \"fromDayOfWeek\" => \"".$rule["fromDayOfWeek"]."\",\n\r";
-                        $serialized .= "                \"fromDay\" => \"".$rule["fromDay"]."\",\n\r";
-                        $serialized .= "                \"fromMonth\" => \"".$rule["fromMonth"]."\",\n\r";
-                        $serialized .= "                \"fromYear\" => \"".$rule["fromYear"]."\",\n\r";
-                        $serialized .= "                \"fromHour\" => \"".$rule["fromHour"]."\",\n\r";
-                        $serialized .= "                \"toDayOfWeek\" => \"".$rule["toDayOfWeek"]."\",\n\r";
-                        $serialized .= "                \"toDay\" => \"".$rule["toDay"]."\",\n\r";
-                        $serialized .= "                \"toMonth\" => \"".$rule["toMonth"]."\",\n\r";
-                        $serialized .= "                \"toYear\" => \"".$rule["toYear"]."\",\n\r";
-                        $serialized .= "                \"toHour\" => \"".$rule["toHour"]."\"\n\r";
+                        $serialized .= "                \"fromDayOfWeek\" => \"".rulebasedthemes::normalize_day_of_week($rule["fromDayOfWeek"])."\",\n\r";
+                        $serialized .= "                \"fromDay\" => \"".rulebasedthemes::normalize_day_of_month($rule["fromDay"])."\",\n\r";
+                        $serialized .= "                \"fromMonth\" => \"".rulebasedthemes::normalize_month($rule["fromMonth"])."\",\n\r";
+                        $serialized .= "                \"fromYear\" => \"".rulebasedthemes::normalize_year($rule["fromYear"])."\",\n\r";
+                        $serialized .= "                \"fromHour\" => \"".rulebasedthemes::normalize_hour($rule["fromHour"])."\",\n\r";
+                        $serialized .= "                \"toDayOfWeek\" => \"".rulebasedthemes::normalize_day_of_week($rule["toDayOfWeek"])."\",\n\r";
+                        $serialized .= "                \"toDay\" => \"".rulebasedthemes::normalize_day_of_month($rule["toDay"])."\",\n\r";
+                        $serialized .= "                \"toMonth\" => \"".rulebasedthemes::normalize_month($rule["toMonth"])."\",\n\r";
+                        $serialized .= "                \"toYear\" => \"".rulebasedthemes::normalize_year($rule["toYear"])."\",\n\r";
+                        $serialized .= "                \"toHour\" => \"".rulebasedthemes::normalize_hour($rule["toHour"])."\"\n\r";
                         break;
                     case "publicapi":
-                        $serialized .= "                \"uri\" => \"".$rule["uri"]."\",\n\r";
-                        $serialized .= "                \"cachemins\" => \"".$rule["cachemins"]."\",\n\r";
-                        $serialized .= "                \"xpath\" => \"".$rule["xpath"]."\",\n\r";
-                        $serialized .= "                \"value\" => \"".$rule["value"]."\"\n\r";
+                        $serialized .= "                \"uri\" => \"".rulebasedthemes::normalize_uri($rule["uri"])."\",\n\r";
+                        $serialized .= "                \"cachemins\" => \"".rulebasedthemes::normalize_cache_mins($rule["cachemins"])."\",\n\r";
+                        $serialized .= "                \"xpath\" => \"".rulebasedthemes::normalize_xpath($rule["xpath"])."\",\n\r";
+                        $serialized .= "                \"value\" => \"".rulebasedthemes::normalize_value($rule["value"])."\"\n\r";
                         break;
                 }
                 $serialized .= "            ),\n\r";
@@ -76,6 +76,24 @@ class rulebasedthemes {
         $serialized .= ");\n\r";
 
         return $serialized;
+    }
+
+    static function normalize_rule_name($value){ return rulebasedthemes::regexnormalize('/^[a-zA-Z0-9\-]*$/', (string)$value); }
+    static function normalize_day_of_week($value) { return rulebasedthemes::regexnormalize('/^[0-7]$/',substr($value,0,1)); }
+    static function normalize_day_of_month($value) { return rulebasedthemes::regexnormalize('/^[0-9]{1,2}$/',substr($value,0,2)); }
+    static function normalize_month($value){ return rulebasedthemes::regexnormalize('/^[0-9]{1,2}$/',substr($value,0,2)); }
+    static function normalize_year($value){ return  rulebasedthemes::regexnormalize('/^[0-9]{1,4}$/',substr($value,0,4)); }
+    static function normalize_hour($value){ return rulebasedthemes::regexnormalize('/^[0-9]{1,2}$/',substr($value,0,2)); }
+    static function normalize_uri($value){ return filter_var(str_replace('"','', $value),FILTER_VALIDATE_URL); }
+    static function normalize_cache_mins($value){ return  rulebasedthemes::regexnormalize('/^[0-9]{1,4}$/',substr($value,0,4)); }
+    static function normalize_xpath($value){ return rulebasedthemes::regexnormalize('~^[a-zA-Z0-9'.preg_quote('@/[]_-').']*$~',$value); }
+    static function normalize_value($value){ return rulebasedthemes::regexnormalize('/^[a-zA-Z0-9\-]*$/',$value); }
+    static function regexnormalize($regex, $value){
+        $matches = array();
+        if(($value != "") && (preg_match($regex, $value, $matches)) && (count($matches) > 0))
+            return $matches[0];
+        else
+            return "";
     }
 
     static function get_current_value(){

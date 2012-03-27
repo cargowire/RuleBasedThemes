@@ -1,4 +1,5 @@
 <?php
+if(is_admin):
 
 if ((isset($_POST['rules'])) && wp_verify_nonce($_POST['_wpnonce'],'rbtme_nonce'))
 {
@@ -280,3 +281,4 @@ if ((isset($_POST['rules'])) && wp_verify_nonce($_POST['_wpnonce'],'rbtme_nonce'
         </div>
     </div>
 </div>
+<?php endif;
