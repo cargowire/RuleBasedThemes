@@ -43,6 +43,7 @@ class rulebasedthemes {
 
         foreach ($rules as $rulekey => $parentRule){
             $serialized .= "    \"".rulebasedthemes::normalize_rule_name($rulekey)."\" => array(\n\r";
+            $serialized .= "        \"group\" => \"".rulebasedthemes::normalize_value($parentRule["group"])."\",\n\r";
             $serialized .= "        \"value\" => \"".rulebasedthemes::normalize_value($parentRule["value"])."\",\n\r";
             $serialized .= "        \"rules\" => array(\n\r";
             foreach ($parentRule["rules"] as $srulekey => $rule){
@@ -150,11 +151,26 @@ class rulebasedthemes {
                 $themeModifier .= " ".$potentialValue;
         }
 
-        /*$themeModifier = "day";
-        if(isset($_GET['night']) || ((!isset($_GET['day'])) && (date("H") > 17 || date("H") < 8)))
-            $themeModifier = "night";
-*/
         return $themeModifier;
+    }
+
+    static function get_rule_list(){
+        global $rbtme_rules;
+        $ruleGroups = array();
+        foreach ($rbtme_rules as $parentrulekey => $parentRule){
+            if($ruleGroups[$parentRule["group"]]){
+                array_push($ruleGroups[$parentRule["group"]], "<li data-value=\"".$parentRule["value"]."\">".$parentrulekey."</li>");
+            }else{
+                $ruleGroups[$parentRule["group"]] = array("<li data-value=\"".$parentRule["value"]."\">".$parentrulekey."</li>");
+            }
+        }
+        $rulesOutput = "";
+        foreach($ruleGroups as $group => $rules){
+            $rulesOutput .= "<div><p>".$group."</p><ul>";
+            $rulesOutput .= join($rules,"");
+            $rulesOutput .= "</ul></div>";
+        }
+        return $rulesOutput;
     }
 }
 function rbtme_init(){
@@ -170,4 +186,7 @@ if (is_admin()) {
 
 function rbtme_get_theme(){
     return rulebasedthemes::get_current_value();
+}
+function rbtme_get_rule_list(){
+    return rulebasedthemes::get_rule_list();
 }

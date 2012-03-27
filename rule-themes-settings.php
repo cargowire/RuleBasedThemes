@@ -21,6 +21,7 @@ if ((isset($_POST['rules'])) && wp_verify_nonce($_POST['_wpnonce'],'rbtme_nonce'
                 var rules = []
                 jQuery('#rule-table tr.rule').each(function(i,v){
                     var ruleJson = "\"" + jQuery('input[name=rulekey]', this).val() + "\": {";
+                    ruleJson += "\"group\":\"" + jQuery('input[name=group]', this).val() + "\",";
                     ruleJson += "\"value\":\"" + jQuery('input[name=value]', this).val() + "\",";
                     ruleJson += "\"rules\": {";
                     var subrules = [];
@@ -93,6 +94,7 @@ if ((isset($_POST['rules'])) && wp_verify_nonce($_POST['_wpnonce'],'rbtme_nonce'
     <tr class="rule">
         <td><input type="button" class="deleterule" value="x"/></td>
         <td><input type="text" name="rulekey" value=""/></td>
+        <td><input type="text" name="group" value=""/></td>
         <td><input type="text" name="value" value="" /></td>
         <td>
         </td>
@@ -169,6 +171,7 @@ if ((isset($_POST['rules'])) && wp_verify_nonce($_POST['_wpnonce'],'rbtme_nonce'
     <thead>
         <tr>
             <th colspan="2">Rule</th>
+            <td>Group</td>
             <th>Value</th>
             <th>Sub Rules</th>
         </tr>
@@ -181,6 +184,7 @@ if ((isset($_POST['rules'])) && wp_verify_nonce($_POST['_wpnonce'],'rbtme_nonce'
     <tr class="rule">
         <td><input type="button" class="deleterule" value="x"/></td>
         <td><input type="text" name="rulekey" value="<?php echo $rulekey; ?>"/></td>
+        <td><input type="text" name="group" value="<?php echo $parentRule["group"]; ?>"/></td>
         <td><input type="text" name="value" value="<?php echo $parentRule["value"]; ?>" /></td>
         <td>
 <?php
