@@ -166,7 +166,7 @@ class rulebasedthemes {
         }
         $rulesOutput = "";
         foreach($ruleGroups as $group => $rules){
-            $rulesOutput .= "<div><p>".$group."</p><ul>";
+            $rulesOutput .= "<div class=".$group."><p>".$group."</p><ul>";
             $rulesOutput .= join($rules,"");
             $rulesOutput .= "</ul></div>";
         }
