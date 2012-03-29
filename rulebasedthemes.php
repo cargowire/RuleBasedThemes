@@ -88,11 +88,14 @@ class rulebasedthemes {
         global $rbtme_rules;
         foreach ($rbtme_rules as $parentrulekey => $parentRule){
             $potentialValue = $parentRule["value"];
-            $apply = false;
+            $apply = true;
+            $appliedARule = false;
             foreach ($parentRule["rules"] as $rulekey => $rule){
                 switch($rule["Type"]){
                     case "Date":
-                        $apply = (
+                        $appliedARule = true;
+                        // Sub-rules are 'and'
+                        $apply = ($apply && (
                                         ($rule["fromDayOfWeek"] == "" || $rule["fromDayOfWeek"] <= Date("N"))
                                     &&  ($rule["fromDay"] == "" || $rule["fromDay"] <= Date("j"))
                                     &&  ($rule["fromMonth"] == "" || $rule["fromMonth"] <= Date("n"))
@@ -103,24 +106,23 @@ class rulebasedthemes {
                                     &&  ($rule["toMonth"] == "" || $rule["toMonth"] >= Date("n"))
                                     &&  ($rule["toYear"] == "" || $rule["toYear"] >= Date("Y"))
                                     &&  ($rule["toHour"] == "" || $rule["toHour"] >= Date("G"))
-                                );
+                                ));
                         break;
                     case "publicapi":
+                        $appliedARule = true;
                         $response = rulebasedthemes::get_api_response($rule["uri"], $rule["cachemins"]);
                         if($response != ""){
                             $doc = new DOMDocument();
                             @$doc->loadXML($response);
                             $xpath = new DOMXpath($doc);
                             $value = @$xpath->evaluate("string(".$rule["xpath"].")");
-                            $apply = stripos($value,$rule["value"]) !== false;
+                            $apply = $apply && stripos($value,$rule["value"]) !== false;
                         }
 
                         break;
                 }
-                if($apply)
-                    break;
             }
-            if($apply)
+            if($appliedARule && $apply)
                 $themeModifier .= " ".$potentialValue;
         }
 
