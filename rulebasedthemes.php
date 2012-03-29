@@ -178,8 +178,8 @@ class rulebasedthemes {
     function get_url($url, $curlopt = array()){
         $curl = curl_init();
         $defaults = array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_FOLLOWLOCATION => 1
+            CURLOPT_RETURNTRANSFER => 1
+            /*,CURLOPT_FOLLOWLOCATION => 1*/
         );
         $curlopt = array(CURLOPT_URL => $url) + $curlopt + $defaults;
         curl_setopt_array($curl, $curlopt);
