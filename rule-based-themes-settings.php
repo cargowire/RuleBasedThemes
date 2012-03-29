@@ -24,6 +24,7 @@ if(is_admin):
         #rule-table > tbody > tr:nth-child(4n+1), #rule-table > tbody > tr:nth-child(4n+2) {background: rgba(243,238,233,0.25);}
         #rule-table > tbody > tr:nth-child(4n+3), #rule-table > tbody > tr:nth-child(4n+4) {background: rgba(180, 188, 84,0.15);}
 
+        #rule-table .up, #rule-table .down { background:transparent;border:none; }
         #rule-table .deleterule, #rule-table .delete {width: 20px; height: 20px; border: 0; background: #dd4444; border-radius: 10px; color: #fff; font-size: 10px; font-weight: bold; box-shadow: 1px 1px 5px rgba(0,0,0,0.2); line-height: 30px; text-transform: uppercase; cursor: pointer; text-indent:-9999px}
         #rule-table .delete {width: 14px; height: 14px; font-size: 7px;}
         #rule-table .deleterule:hover, #rule-table .delete:hover {background: #ee5555;}
@@ -57,6 +58,25 @@ if(is_admin):
                    $('#rules-form').on('submit', function(e){
                        var json = rbtme.rules.serialize();
                        rbtme.rules.save(json);
+                       e.preventDefault();
+                   });
+                   $('#rule-table').on('click', '.up', function(e){
+                       var row = $(this).parents('tr:first');
+                       var actions = row.next('tr');
+                       var prevActions = row.prev('tr');
+                       var prev = prevActions.prev('tr');
+                       if(prev.length)
+                           actions.after(prevActions).after(prev);
+                       e.preventDefault();
+                   });
+                   $('#rule-table').on('click', '.down', function(e){
+                       var row = $(this).parents('tr:first');
+                       var actions = row.next('tr');
+                       var next = actions.next('tr');
+                       var nextActions = next.next('tr');
+
+                       if(nextActions.length)
+                           nextActions.after(actions).after(row);
                        e.preventDefault();
                    });
                    $('#rule-table').on('click', '.delete', function(e){
@@ -136,7 +156,11 @@ if(is_admin):
     </script>
     <script type="text/html" id="rule-form">
         <tr class="rule">
-            <td><button class="deleterule">x</button></td>
+            <td>
+                <button class="deleterule">x</button>
+                <button class="up">&#9650;</button>
+                <button class="down">&#9660;</button>
+            </td>
             <td>
                 <input type="text" name="rulekey" required="required" pattern="^[a-zA-Z0-9\-\s]*$" placeholder="Rule name" value=""/><br/>
                 <input type="text" name="display" pattern="^[a-zA-Z0-9\-\s]*$" placeholder="Display" value=""/>
@@ -228,7 +252,11 @@ if(is_admin):
                         foreach ($rbtme_rules as $rulekey => $parentRule):
     ?>
                             <tr class="rule">
-                                <td><button class="deleterule">x</button></td>
+                                <td>
+                                    <button class="deleterule">x</button>
+                                    <button class="up">&#9650;</button>
+                                    <button class="down">&#9660;</button>
+                                </td>
                                 <td>
                                     <input type="text" name="rulekey" required="required" pattern="^[a-zA-Z0-9\-\s]*$" placeholder="Rule name" value="<?php echo $rulekey; ?>"/><br/>
                                     <input type="text" name="display" pattern="^[a-zA-Z0-9\-\s]*$" placeholder="Display" value="<?php echo $parentRule["display"]; ?>"/>
