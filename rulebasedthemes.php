@@ -92,7 +92,6 @@ class rulebasedthemes {
             foreach ($parentRule["rules"] as $rulekey => $rule){
                 switch($rule["Type"]){
                     case "Date":
-
                         $apply = (
                                         ($rule["fromDayOfWeek"] == "" || $rule["fromDayOfWeek"] <= Date("N"))
                                     &&  ($rule["fromDay"] == "" || $rule["fromDay"] <= Date("j"))
@@ -107,26 +106,15 @@ class rulebasedthemes {
                                 );
                         break;
                     case "publicapi":
-                        $cacheMins = $rule["cachemins"];
-                        $cacheFile = dirname(__FILE__)."/cache/api-".$parentrulekey."-".$rulekey.".php";
-                        if (!file_exists($cacheFile) ||
-                            time() - filemtime($cacheFile) > ($cacheMins * 60)) {
-                            $fp = fopen($cacheFile, 'w+');
-                            if ($fp) {
-                                if (flock($fp, LOCK_EX)) {
-                                    $response = file_get_contents($rule["uri"]);
-                                    fwrite($fp, $response);
-                                    flock($fp, LOCK_UN);
-                                }
-                                fclose($fp);
-                            }
+                        $response = rulebasedthemes::get_api_response($rule["uri"], $rule["cachemins"]);
+                        if($response != ""){
+                            $doc = new DOMDocument();
+                            @$doc->loadXML($response);
+                            $xpath = new DOMXpath($doc);
+                            $value = @$xpath->evaluate("string(".$rule["xpath"].")");
+                            $apply = stripos($value,$rule["value"]) !== false;
                         }
-                        $response = file_get_contents($cacheFile);
-                        $doc = new DOMDocument();
-                        $doc->loadXML($response);
-                        $xpath = new DOMXpath($doc);
-                        $value = $xpath->evaluate("string(".$rule["xpath"].")");
-                        $apply = strpos($value,$rule["value"]) !== false;
+
                         break;
                 }
                 if($apply)
@@ -161,5 +149,40 @@ class rulebasedthemes {
             $rulesOutput .= "</ul></div>";
         }
         return $rulesOutput;
+    }
+
+    static function get_api_response($uri, $cacheMins){
+        $cacheFile = dirname(__FILE__)."/cache/".md5($uri).".php";
+        if ((!file_exists($cacheFile)) || (time() - filemtime($cacheFile) > ($cacheMins * 60))) {
+            $fp = fopen($cacheFile, 'w+');
+            if ($fp) {
+                if (flock($fp, LOCK_EX)) {
+                    $response = rulebasedthemes::get_url($uri);
+                    if($response != "") {
+                        fwrite($fp, $response);
+                    }
+                    flock($fp, LOCK_UN);
+                }
+                fclose($fp);
+            }
+        }
+        return file_get_contents($cacheFile);
+    }
+
+    function get_url($url, $curlopt = array()){
+        $curl = curl_init();
+        $defaults = array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_FOLLOWLOCATION => 1
+        );
+        $curlopt = array(CURLOPT_URL => $url) + $curlopt + $defaults;
+        curl_setopt_array($curl, $curlopt);
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        if($response === false)
+            return "";
+        else
+            return $response;
     }
 }
