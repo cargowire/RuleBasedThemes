@@ -2,7 +2,7 @@
 /*
 Plugin Name: Rule Based Themes
 Plugin URI: http://cargowire.net/projects/rule-based-themes
-Description: A plugin that provides various body classes based on predefined rules
+Description: A plugin that provides a class string (most likely to be used on the body) based on user defined rules
 Version: 1.0
 Author: Craig Rowe
 Author URI: http://cargowire.net
@@ -41,7 +41,7 @@ class wp_rulebasedthemes {
 
     // Defer to the settings file for the admin panel
     static function options_subpanel(){
-        include "rule-themes-settings.php";
+        include "rule-based-themes-settings.php";
     }
 
     static function filter_plugin_actions($links, $file){

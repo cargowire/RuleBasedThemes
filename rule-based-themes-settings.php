@@ -38,7 +38,7 @@ if(is_admin):
         #rule-table .rule table td:last-child {border-right: 0;}
         #rule-table .rule table:nth-child(2n) {background: rgba(0,0,0,0.03);}
 
-        #rule-table input[type="text"] {border-radius: 0; max-width: 110px; font-size: 11px}
+        #rule-table input[type="text"],#rule-table input[type="url"] {border-radius: 0; max-width: 110px; font-size: 11px}
         #rule-table .rule table input[maxlength="4"] {width: 45px;}
         #rule-table .rule table input.short {width: 23px;}
 
@@ -136,9 +136,9 @@ if(is_admin):
     <script type="text/html" id="rule-form">
         <tr class="rule">
             <td><button class="deleterule">x</button></td>
-            <td><input type="text" name="rulekey" value=""/></td>
-            <td><input type="text" name="group" value=""/></td>
-            <td><input type="text" name="value" value="" /></td>
+            <td><input type="text" name="rulekey" required="required" pattern="^[a-zA-Z0-9\-]*$" value=""/></td>
+            <td><input type="text" name="group" pattern="^[a-zA-Z0-9\-]*$" value=""/></td>
+            <td><input type="text" name="value" pattern="^[a-zA-Z0-9\-]*$" value="" /></td>
             <td></td>
         </tr>
         <tr class="actions"><td></td><td></td><td></td><td><input type="button" class="adddate" value="add date"/><input type="button" class="addapi" value="add api"/></td></tr>
@@ -163,16 +163,16 @@ if(is_admin):
             <tbody>
             <tr class="sub-rule" data-type="Date">
                 <td></td>
-                <td><input type="text" maxlength="2" class="short" name="fromDayOfWeek" value=""/></td>
-                <td><input type="text" maxlength="2" class="short" name="fromDay" value=""/></td>
-                <td><input type="text" maxlength="2" class="short" name="fromMonth" value=""/></td>
-                <td><input type="text" maxlength="4" name="fromYear" value=""/></td>
-                <td><input type="text" maxlength="2" class="short" name="fromHour" value=""/></td>
-                <td><input type="text" maxlength="2" class="short" name="toDayOfWeek" value=""/></td>
-                <td><input type="text" maxlength="2" class="short" name="toDay" value=""/></td>
-                <td><input type="text" maxlength="2" class="short" name="toMonth" value=""/></td>
-                <td><input type="text" maxlength="4" name="toYear" value=""/></td>
-                <td><input type="text" maxlength="2" class="short" name="toHour" value=""/></td>
+                <td><input type="text" maxlength="2" class="short" name="fromDayOfWeek" pattern="^[0-7]{1}*$" value=""/></td>
+                <td><input type="text" maxlength="2" class="short" name="fromDay" pattern="^[0-9]{1,2}$" value=""/></td>
+                <td><input type="text" maxlength="2" class="short" name="fromMonth" pattern="^[0-9]{1,2}$" value=""/></td>
+                <td><input type="text" maxlength="4" name="fromYear" pattern="^[0-9]{1,4}$" value=""/></td>
+                <td><input type="text" maxlength="2" class="short" name="fromHour" pattern="^[0-9]{1,2}$" value=""/></td>
+                <td><input type="text" maxlength="2" class="short" name="toDayOfWeek" pattern="^[0-7]$" value=""/></td>
+                <td><input type="text" maxlength="2" class="short" name="toDay" pattern="^[0-9]{1,2}$" value=""/></td>
+                <td><input type="text" maxlength="2" class="short" name="toMonth" pattern="^[0-9]{1,2}$" value=""/></td>
+                <td><input type="text" maxlength="4" name="toYear" pattern="^[0-9]{1,4}$" value=""/></td>
+                <td><input type="text" maxlength="2" class="short" name="toHour" pattern="^[0-9]{1,2}$" value=""/></td>
             </tr>
             </tbody>
             </table>
@@ -191,10 +191,10 @@ if(is_admin):
             <tbody>
                 <tr class="sub-rule" data-type="publicapi">
                     <td></td>
-                    <td><input type="text" name="uri" value="" /></td>
-                    <td><input type="text" name="cachemins" value=""/></td>
-                    <td><input type="text" name="xpath" value=""/></td>
-                    <td><input type="text" name="value" value=""/></td>
+                    <td><input type="url" name="uri" required="required" value="" /></td>
+                    <td><input type="text" name="cachemins" pattern="^[0-9]{1,4}$" value=""/></td>
+                    <td><input type="text" name="xpath" pattern="^[a-zA-Z0-9\@\/\[\]_-]*$" required="required" value=""/></td>
+                    <td><input type="text" name="value" pattern="^[a-zA-Z0-9\-]*$" required="required" value=""/></td>
                 </tr>
             </tbody>
             </table>
@@ -225,9 +225,9 @@ if(is_admin):
     ?>
                             <tr class="rule">
                                 <td><button class="deleterule">x</button></td>
-                                <td><input type="text" name="rulekey" value="<?php echo $rulekey; ?>"/></td>
-                                <td><input type="text" name="group" value="<?php echo $parentRule["group"]; ?>"/></td>
-                                <td><input type="text" name="value" value="<?php echo $parentRule["value"]; ?>" /></td>
+                                <td><input type="text" name="rulekey" required="required" pattern="^[a-zA-Z0-9\-]*$" value="<?php echo $rulekey; ?>"/></td>
+                                <td><input type="text" name="group" pattern="^[a-zA-Z0-9\-]*$" value="<?php echo $parentRule["group"]; ?>"/></td>
+                                <td><input type="text" name="value" pattern="^[a-zA-Z0-9\-]*$" value="<?php echo $parentRule["value"]; ?>" /></td>
                                 <td>
     <?php
                             foreach ($parentRule["rules"] as $rulekey => $rule):
@@ -253,16 +253,16 @@ if(is_admin):
                                             <tbody>
                                                 <tr class="sub-rule" data-type="Date">
                                                     <td></td>
-                                                    <td><input type="text" maxlength="2" class="short" name="fromDayOfWeek" value="<?php echo $rule["fromDayOfWeek"];?>"/></td>
-                                                    <td><input type="text" maxlength="2" class="short" name="fromDay" value="<?php echo $rule["fromDay"];?>"/></td>
-                                                    <td><input type="text" maxlength="2" class="short" name="fromMonth" value="<?php echo $rule["fromMonth"];?>"/></td>
-                                                    <td><input type="text" maxlength="4" name="fromYear" value="<?php echo $rule["fromYear"];?>"/></td>
-                                                    <td><input type="text" maxlength="2" class="short" name="fromHour" value="<?php echo $rule["fromHour"];?>"/></td>
-                                                    <td><input type="text" maxlength="2" class="short" name="toDayOfWeek" value="<?php echo $rule["toDayOfWeek"];?>"/></td>
-                                                    <td><input type="text" maxlength="2" class="short" name="toDay" value="<?php echo $rule["toDay"];?>"/></td>
-                                                    <td><input type="text" maxlength="2" class="short" name="toMonth" value="<?php echo $rule["toMonth"];?>"/></td>
-                                                    <td><input type="text" maxlength="4" name="toYear" value="<?php echo $rule["toYear"];?>"/></td>
-                                                    <td><input type="text" maxlength="2" class="short" name="toHour" value="<?php echo $rule["toHour"];?>"/></td>
+                                                    <td><input type="text" maxlength="2" class="short" name="fromDayOfWeek" pattern="^[0-7]{1}$"  value="<?php echo $rule["fromDayOfWeek"];?>"/></td>
+                                                    <td><input type="text" maxlength="2" class="short" name="fromDay" pattern="^[0-9]{1,2}$" value="<?php echo $rule["fromDay"];?>"/></td>
+                                                    <td><input type="text" maxlength="2" class="short" name="fromMonth" pattern="^[0-9]{1,2}$" value="<?php echo $rule["fromMonth"];?>"/></td>
+                                                    <td><input type="text" maxlength="4" name="fromYear" pattern="^[0-9]{1,4}$" value="<?php echo $rule["fromYear"];?>"/></td>
+                                                    <td><input type="text" maxlength="2" class="short" name="fromHour" pattern="^[0-9]{1,2}$" value="<?php echo $rule["fromHour"];?>"/></td>
+                                                    <td><input type="text" maxlength="2" class="short" name="toDayOfWeek" pattern="^[0-7]$" value="<?php echo $rule["toDayOfWeek"];?>"/></td>
+                                                    <td><input type="text" maxlength="2" class="short" name="toDay" pattern="^[0-9]{1,2}$" value="<?php echo $rule["toDay"];?>"/></td>
+                                                    <td><input type="text" maxlength="2" class="short" name="toMonth" pattern="^[0-9]{1,2}$" value="<?php echo $rule["toMonth"];?>"/></td>
+                                                    <td><input type="text" maxlength="4" name="toYear" pattern="^[0-9]{1,4}$" value="<?php echo $rule["toYear"];?>"/></td>
+                                                    <td><input type="text" maxlength="2" class="short" name="toHour" pattern="^[0-9]{1,2}$" value="<?php echo $rule["toHour"];?>"/></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -283,10 +283,10 @@ if(is_admin):
                                             <tbody>
                                                 <tr class="sub-rule" data-type="publicapi">
                                                     <td></td>
-                                                    <td><input type="text" name="uri" value="<?php echo $rule["uri"];?>"/></td>
-                                                    <td><input type="text" name="cachemins" value="<?php echo $rule["cachemins"];?>"/></td>
-                                                    <td><input type="text" name="xpath" value="<?php echo $rule["xpath"];?>"/></td>
-                                                    <td><input type="text" name="value" value="<?php echo $rule["value"];?>"/></td>
+                                                    <td><input type="url" name="uri" required="required" value="<?php echo $rule["uri"];?>"/></td>
+                                                    <td><input type="text" name="cachemins" pattern="^[0-9]{1,4}$" value="<?php echo $rule["cachemins"];?>"/></td>
+                                                    <td><input type="text" name="xpath" required="required" pattern="^[a-zA-Z0-9\@\/\[\]_-]*$" value="<?php echo $rule["xpath"];?>"/></td>
+                                                    <td><input type="text" name="value" required="required" pattern="^[a-zA-Z0-9\-]*$" value="<?php echo $rule["value"];?>"/></td>
                                                 </tr>
                                             </tbody>
                                         </table>
