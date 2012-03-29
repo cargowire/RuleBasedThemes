@@ -313,7 +313,7 @@ if(is_admin):
                         <li><?php _e('Rule names must be unique but are only used by the <strong>rbtme_get_rule_list()</strong> functionality.  Similarly group values
                         are only used by these list outputs (to group the rules together for display).', 'RBTME'); ?></li>
                         <li><?php _e('The "value" column is the key field which is used as the actual "class" to add to the final <strong>get_current_theme()</strong> response.', 'RBTME');?></li>
-                        <li><?php _e('Sub-rules are combined using "or".', 'RBTME');?></li>
+                        <li><?php _e('Sub-rules are combined using "and".  To create "or" structures simply create multiple rules.', 'RBTME');?></li>
                     </ul>
                 </div>
             </div>
