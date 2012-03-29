@@ -23,7 +23,8 @@ class rulebasedthemes {
 
         foreach ($rules as $rulekey => $parentRule){
             $serialized .= "    \"".rulebasedthemes::normalize_rule_name($rulekey)."\" => array(\n\r";
-            $serialized .= "        \"group\" => \"".rulebasedthemes::normalize_value($parentRule["group"])."\",\n\r";
+            $serialized .= "        \"display\" => \"".rulebasedthemes::normalize_rule_name($parentRule["display"])."\",\n\r";
+            $serialized .= "        \"group\" => \"".rulebasedthemes::normalize_rule_name($parentRule["group"])."\",\n\r";
             $serialized .= "        \"value\" => \"".rulebasedthemes::normalize_value($parentRule["value"])."\",\n\r";
             $serialized .= "        \"rules\" => array(\n\r";
             foreach ($parentRule["rules"] as $srulekey => $rule){
@@ -59,7 +60,7 @@ class rulebasedthemes {
         return $serialized;
     }
 
-    static function normalize_rule_name($value){ return rulebasedthemes::regexnormalize('/^[a-zA-Z0-9\-]*$/', (string)$value); }
+    static function normalize_rule_name($value){ return rulebasedthemes::regexnormalize('/^[a-zA-Z0-9\-\s]*$/', (string)$value); }
     static function normalize_day_of_week($value) { return rulebasedthemes::regexnormalize('/^[0-7]$/',substr($value,0,1)); }
     static function normalize_day_of_month($value) { return rulebasedthemes::regexnormalize('/^[0-9]{1,2}$/',substr($value,0,2)); }
     static function normalize_month($value){ return rulebasedthemes::regexnormalize('/^[0-9]{1,2}$/',substr($value,0,2)); }
@@ -138,10 +139,13 @@ class rulebasedthemes {
         global $rbtme_rules;
         $ruleGroups = array();
         foreach ($rbtme_rules as $parentrulekey => $parentRule){
+            $ruleOutput = "<li data-value=\"".$parentRule["value"]."\">".($parentRule["display"] == "" ? $parentrulekey:$parentRule["display"])."</li>";
             if($ruleGroups[$parentRule["group"]]){
-                array_push($ruleGroups[$parentRule["group"]], "<li data-value=\"".$parentRule["value"]."\">".$parentrulekey."</li>");
+                if(!in_array($ruleOutput, $ruleGroups[$parentRule["group"]])) {
+                    array_push($ruleGroups[$parentRule["group"]], $ruleOutput);
+                }
             }else{
-                $ruleGroups[$parentRule["group"]] = array("<li data-value=\"".$parentRule["value"]."\">".$parentrulekey."</li>");
+                $ruleGroups[$parentRule["group"]] = array($ruleOutput);
             }
         }
         $rulesOutput = "";

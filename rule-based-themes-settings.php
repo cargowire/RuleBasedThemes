@@ -98,6 +98,7 @@ if(is_admin):
                     var rules = []
                     jQuery('#rule-table tr.rule').each(function(i,v){
                         var ruleJson = "\"" + jQuery('input[name=rulekey]', this).val() + "\": {";
+                        ruleJson += "\"display\":\"" + jQuery('input[name=display]', this).val() + "\",";
                         ruleJson += "\"group\":\"" + jQuery('input[name=group]', this).val() + "\",";
                         ruleJson += "\"value\":\"" + jQuery('input[name=value]', this).val() + "\",";
                         ruleJson += "\"rules\": {";
@@ -136,8 +137,11 @@ if(is_admin):
     <script type="text/html" id="rule-form">
         <tr class="rule">
             <td><button class="deleterule">x</button></td>
-            <td><input type="text" name="rulekey" required="required" pattern="^[a-zA-Z0-9\-]*$" value=""/></td>
-            <td><input type="text" name="group" pattern="^[a-zA-Z0-9\-]*$" value=""/></td>
+            <td>
+                <input type="text" name="rulekey" required="required" pattern="^[a-zA-Z0-9\-\s]*$" placeholder="Rule name" value=""/><br/>
+                <input type="text" name="display" pattern="^[a-zA-Z0-9\-\s]*$" placeholder="Display" value=""/>
+            </td>
+            <td><input type="text" name="group" pattern="^[a-zA-Z0-9\-\s]*$" value=""/></td>
             <td><input type="text" name="value" pattern="^[a-zA-Z0-9\-]*$" value="" /></td>
             <td></td>
         </tr>
@@ -225,8 +229,11 @@ if(is_admin):
     ?>
                             <tr class="rule">
                                 <td><button class="deleterule">x</button></td>
-                                <td><input type="text" name="rulekey" required="required" pattern="^[a-zA-Z0-9\-]*$" value="<?php echo $rulekey; ?>"/></td>
-                                <td><input type="text" name="group" pattern="^[a-zA-Z0-9\-]*$" value="<?php echo $parentRule["group"]; ?>"/></td>
+                                <td>
+                                    <input type="text" name="rulekey" required="required" pattern="^[a-zA-Z0-9\-\s]*$" placeholder="Rule name" value="<?php echo $rulekey; ?>"/><br/>
+                                    <input type="text" name="display" pattern="^[a-zA-Z0-9\-\s]*$" placeholder="Display" value="<?php echo $parentRule["display"]; ?>"/>
+                                </td>
+                                <td><input type="text" name="group" pattern="^[a-zA-Z0-9\-\s]*$" value="<?php echo $parentRule["group"]; ?>"/></td>
                                 <td><input type="text" name="value" pattern="^[a-zA-Z0-9\-]*$" value="<?php echo $parentRule["value"]; ?>" /></td>
                                 <td>
     <?php
